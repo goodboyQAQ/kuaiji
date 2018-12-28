@@ -38,10 +38,11 @@
               a=false;
             }
             if(a==true){
-              this.$ajax.get('api/user/login?userName='+this.userName+'&password='+this.password).then(res=>{
+              this.$ajax.post('api/login?username='+this.userName+'&password='+this.password).then(res=>{
                 if(res.data.success){
-
+                  window.location.href="/company";
                 }else{
+                  console.log(res.data);
                   this.errorMsg2=res.data.msg
                 }
               });
