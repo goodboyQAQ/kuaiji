@@ -2,7 +2,6 @@
   <div class="container">
 
     <el-form :inline="true"  :model="form" class="demo-form-inline">
-      <div class="one-row">
       <el-form-item label="公司名称：">
         <el-input v-model="form.companyName"/>
       </el-form-item>
@@ -15,41 +14,38 @@
       <el-form-item label="法人：">
         <el-input v-model="form.corporation"/>
       </el-form-item>
-      </div>
 
-      <div class="one-row">
-        <el-form-item></el-form-item>
-        <el-form-item></el-form-item>
-        <el-form-item></el-form-item>
-        <el-form-item>
-          <span style="margin-left:20px;"></span>
-          <el-button type="primary" @click="select">查询</el-button>
-          <el-button type="info" @click="reset">重置</el-button>
-        </el-form-item>
-      </div>
+      <el-form-item>
+        <span style="margin-left:20px;"></span>
+        <el-button type="primary" @click="select">查询</el-button>
+        <el-button type="info" @click="reset">重置</el-button>
+      </el-form-item>
+
     </el-form>
 
-    <template>
-      <div style="float:left;padding:20px">
-        <span class='tool' @click="fnAdd">
-          <i class="iconfont icon-xinzeng-shi"></i>
-          <span>添加</span>
-        </span>
-        <span class='tool' @click="fnDownload">
-          <i class="iconfont icon-download"></i>
-          <span>导入模板</span>
-        </span>
-        <span class='tool' @click="fnImport">
-          <i class="iconfont icon-daoru"></i>
-          <span>导入</span>
-        </span>
-        <span class='tool' @click="fnExport">
-          <i class="iconfont icon-daochu"></i>
-          <span>导出</span>
-        </span>
-        <input id="myfile" type="file" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" value="点击上传"  @change="change" style='display:none;'>
-      </div>
-    </template>
+    <!--<template>-->
+      <!--<div style="float:left;padding:20px">-->
+        <!--<span class='tool' @click="fnAdd">-->
+          <!--<i class="iconfont icon-xinzeng-shi"></i>-->
+          <!--<span>添加</span>-->
+        <!--</span>-->
+        <!--<span class='tool' @click="fnDownload">-->
+          <!--<i class="iconfont icon-download"></i>-->
+          <!--<span>导入模板</span>-->
+        <!--</span>-->
+        <!--<span class='tool' @click="fnImport">-->
+          <!--<i class="iconfont icon-daoru"></i>-->
+          <!--<span>导入</span>-->
+        <!--</span>-->
+        <!--<span class='tool' @click="fnExport">-->
+          <!--<i class="iconfont icon-daochu"></i>-->
+          <!--<span>导出</span>-->
+        <!--</span>-->
+        <!--<input id="myfile" type="file" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" value="点击上传"  @change="change" style='display:none;'>-->
+      <!--</div>-->
+    <!--</template>-->
+    <Tool @add="fnAdd" @download="fnDownload" @import="fnImport" @export="fnExport" @change="change"></Tool>
+
 
     <el-table :data="tableData" stripe border  style="width: 100%">
       <el-table-column fixed prop="companyName" label="公司名称" width="180"/>
@@ -122,6 +118,7 @@
   </div>
 </template>
 <script>
+  import Tool from '../base/tool';
 
     export default {
         data() {
@@ -151,15 +148,17 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.$ajax.post('api/company/deletecompany')
+              this.$ajax.post('api/company/deletecompany?id='+val.id)
                 .then(res=>{
+                  console.log(res);
                     if(res.data.success){
                       this.$message({
                         type:"success",
-                        message:res.data.message
-                      })
+                        message:res.data.msg
+                      });
+                      this.initList();
                     }else{
-                      this.$message(res.data.message);
+                      this.$message(res.data.msg);
                     }
               });
             })
@@ -195,7 +194,7 @@
                     this.getList();
                     this.$message({
                       type: "success",
-                      message: "添加成功!"
+                      message: res.data.msg
                       }
                     );
                     this.initList();
@@ -211,12 +210,12 @@
                   if(res.data.success){
                     this.$message({
                         type: "success",
-                        message: "修改成功!"
+                        message:res.data.msg
                       }
                     );
                     this.initList();
                   }else{
-                    this.$message(res.message);
+                    this.$message(res.data.msg);
                   }
                   this.dialogEdit=false;
 
@@ -313,6 +312,7 @@
         },
         computed: {},
         components: {
+          Tool
         },
     }
 </script>
